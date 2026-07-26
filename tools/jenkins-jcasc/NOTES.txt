@@ -1,0 +1,37 @@
+Your Jenkins master has been installed.
+
+1. Get your 'admin' user password by running:
+   {{- if contains "NodePort" .Values.service.type }}
+   export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "jenkins.fullname" . }})
+   export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+   echo "Jenkins URL: http://$NODE_IP:$NODE_PORT"
+   {{- else if contains "LoadBalancer" .Values.service.type }}
+   NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+         You can watch the status of by running 'kubectl get svc -w {{ include "jenkins.fullname" . }}'
+   export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "jenkins.fullname" . }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+   echo "Jenkins URL: http://$SERVICE_IP:{{ .Values.service.port }}"
+   {{- else if contains "ClusterIP" .Values.service.type }}
+   export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+   echo "Jenkins is only available from within the cluster."
+   echo "To access it from your local machine, run:"
+   echo "  kubectl port-forward $POD_NAME 8080:8080"
+   echo "Then open http://localhost:8080 in your browser."
+   {{- end }}
+
+2. Login with the following credentials:
+   Username: {{ .Values.admin.user }}
+   {{- if .Values.admin.password }}
+   Password: {{ .Values.admin.password }}
+   {{- else }}
+   Password: Get the auto-generated password by running:
+     kubectl get secret --namespace {{ .Release.Namespace }} {{ include "jenkins.fullname" . }}-admin -o jsonpath="{.data.jenkins-admin-password}" | base64 -d
+   {{- end }}
+
+3. The Jenkins master is configured with Configuration as Code (JCasC).
+   The configuration is sourced from the 'jcasc.configScripts' value in your values.yaml.
+   To apply changes, you can either:
+   a) Update the values.yaml and run 'helm upgrade {{ .Release.Name }} .'.
+   b) Reload the configuration from the Jenkins UI (Manage Jenkins -> Configuration as Code).
+
+For more information on running Jenkins on Kubernetes, visit:
+https://www.jenkins.io/doc/book/installing/kubernetes/

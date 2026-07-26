@@ -1,0 +1,10 @@
+{{- if .Values.jcasc.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "jenkins.fullname" . }}-jcasc
+  labels:
+    {{- include "jenkins.labels" . | nindent 4 }}
+data:
+{{- toYaml .Values.jcasc.configScripts | nindent 2 }}
+{{- end }}

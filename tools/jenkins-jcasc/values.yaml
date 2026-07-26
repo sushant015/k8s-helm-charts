@@ -1,0 +1,142 @@
+# Default values for jenkins chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: jenkins-jcasc # The image built by the build.sh script
+  pullPolicy: IfNotPresent
+  # Override the image tag to use a specific version
+  # By default, it uses the chart's appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+
+securityContext:
+  runAsUser: 1000
+
+# Service for Jenkins master web UI
+service:
+  # For local development with Minikube, NodePort is a great way to expose Jenkins.
+  type: NodePort
+  port: 8080
+  nodePort: 30080 # Specify a nodePort if type is NodePort
+
+# Service for Jenkins agents to connect to the master
+agentService:
+  type: ClusterIP
+  port: 50000
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: jenkins.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+persistence:
+  enabled: true
+  # For Minikube, 'standard' is the default StorageClass created by the 'storage-provisioner' addon.
+  # Ensure you have run: minikube addons enable storage-provisioner
+  storageClass: "standard"
+  accessMode: ReadWriteOnce
+  size: 8Gi
+
+# Configuration as Code (JCasC)
+# The jenkins.yaml content is defined here.
+# It will be mounted as a ConfigMap into the Jenkins pod.
+jcasc:
+  enabled: false
+  # The content of your jenkins.yaml JCasC file.
+  # See: https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/configurationReload.md
+  # configScripts:
+  #   # This key (e.g., 'jenkins-casc-config') becomes the filename in the mount path.
+  #   jenkins-casc-config: |
+  #     jenkins:
+  #       systemMessage: "Jenkins configured automatically by JCasC"
+  #       numExecutors: 2
+  #       scmCheckoutRetryCount: 0
+  #       label: "master"
+  #       mode: NORMAL
+  #       security:
+  #         globalJobDslSecurity:
+  #           useScriptSecurity: false
+        
+  #       # Example of setting up a Kubernetes cloud for dynamic agents
+  #       # You need the kubernetes plugin for this.
+  #       # clouds:
+  #       #   - kubernetes:
+  #       #       name: "kubernetes"
+  #       #       serverUrl: "https://kubernetes.default"
+  #       #       # Use the service account created by this chart
+  #       #       credentialsId: "" # Jenkins credentials for the k8s service account token
+  #       #       jenkinsUrl: "http://jenkins.jenkins.svc.cluster.local:8080"
+  #       #       namespace: "jenkins-agents"
+  #       #       # Example pod template
+  #       #       templates:
+  #       #         - name: "default-agent"
+  #       #           label: "default"
+  #       #           containers:
+  #       #             - name: "jnlp"
+  #       #               image: "jenkins/inbound-agent:latest"
+  #       #               args: '${computer.jnlpmac} ${computer.name}'
+  #       #               workingDir: "/home/jenkins/agent"
+
+# Admin user credentials. The password will be created as a secret.
+# If the password is left empty, a random one will be generated.
+admin:
+  user: admin
+  # It is recommended to leave this empty to generate a random password.
+  password: ""
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # Note: Ensure your Minikube VM has sufficient resources allocated to handle these requests/limits.
+  # e.g., minikube start --cpus=4 --memory=4Gi
+  limits:
+    cpu: 1500m
+    memory: 3Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+# Additional environment variables for the Jenkins container
+extraEnv:
+  - name: JAVA_OPTS
+    value: "-Djenkins.install.runSetupWizard=false -Dcom.amazonaws.sdk.disableEc2Metadata=true"
+  - name: CASC_JENKINS_CONFIG
+    value: "/var/jenkins_home/casc_configs/jenkins-casc-config"
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
