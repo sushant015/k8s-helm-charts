@@ -80,17 +80,17 @@ jcasc:
     # This provides a minimal default configuration.
     # It is expected that you will override this with your own configuration
     # during deployment, for example, via Terraform.
-    jenkins.yaml: |
-      jenkins:
-        systemMessage: "Jenkins configured automatically by JCasC"
-      security:
-        securityRealm:
-          local:
-            allowsSignup: false
-            users: []
-        authorizationStrategy:
-          loggedInUsersCanDoAnything:
-            allowAnonymousRead: false
+    # jenkins-casc.yaml: |
+    #   jenkins:
+    #     systemMessage: "Jenkins configured automatically by JCasC"
+    #   security:
+    #     securityRealm:
+    #       local:
+    #         allowsSignup: false
+    #         users: []
+    #     authorizationStrategy:
+    #       loggedInUsersCanDoAnything:
+    #         allowAnonymousRead: false
 
 # Admin user credentials. The password will be created as a secret.
 # If the password is left empty, a random one will be generated.
@@ -119,6 +119,14 @@ extraEnv:
     value: "-Djenkins.install.runSetupWizard=false -Dcom.amazonaws.sdk.disableEc2Metadata=true"
   - name: CASC_JENKINS_CONFIG
     value: "/var/jenkins_home/casc_configs"
+  - name: SEED_REPO
+    value: "https://github.com/sushant015/jenkins-automated-jobs.git"
+  - name: SEED_BRANCH
+    value: "main"
+  - name: GIT_USERNAME
+    value: "Jenkins"
+  - name: GIT_EMAIL
+    value: "jenkins@example.com"
 
 nodeSelector: {}
 tolerations: []
