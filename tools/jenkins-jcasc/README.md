@@ -41,11 +41,11 @@ minikube status
 
 ### 3. Build and Load the Jenkins Docker Image
 
-This chart uses a custom Docker image named `jenkins-jcasc`. A build script is provided to create it.
+This chart is designed to use a custom Docker image named `jenkins-jcasc`. The build script is located in the `k8s-app/jenkins-jcasc/` directory of the repository.
 
 ```bash
-# Navigate to the chart directory
-cd /path/to/k8s-app/jenkins-jcasc
+# Navigate to the image build directory
+cd /path/to/your/repo/k8s-app/jenkins-jcasc
 
 # Run the build script. It will print the full image name.
 # e.g., jenkins-jcasc:20231027-123456
@@ -64,8 +64,8 @@ Deploy Jenkins using Helm. You must override the `image.tag` with the one you ju
 # Replace '20231027-123456' with your actual image tag.
 export IMAGE_TAG="20231027-123456"
 
-cd /path/to/k8s-helm-charts/tools/jenkins-jcasc
-
+# Navigate to the Helm chart directory
+cd /path/to/your/repo/k8s-helm-charts/tools/jenkins-jcasc
 
 # Install the Helm chart into a 'jenkins' namespace
 helm install my-jenkins . \
