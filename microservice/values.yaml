@@ -103,3 +103,7 @@ tolerations: []
 
 affinity: {}
 
+pdb:
+  enabled: false
+  minAvailable: 1
+

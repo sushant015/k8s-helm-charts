@@ -98,3 +98,6 @@ secrets:
   JWT_SECRET: "dev-secret-key-change-in-production-12345"
   DATABASE_POOL_SIZE: "10"
   DATABASE_MAX_IDLE_TIME: "30"
+
+networkPolicy:
+  enabled: false
