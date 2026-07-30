@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "chart.fullname" . }}-initdb
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+data:
+  init.sql: |
+{{ .Values.initdb.script | indent 4 }}

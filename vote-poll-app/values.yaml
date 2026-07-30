@@ -2,15 +2,26 @@
 # Each key under this top level corresponds to a microservice (a sub-chart alias).
 
 # Global configuration values that will be placed in the vote-poll-config ConfigMap.
-# This makes the chart self-contained.
+# This makes the chart self-contained and aligned with the k8s-minikube setup.
 config:
-  # Database host for all services, pointing to the Kubernetes service name for PostgreSQL.
+  AUTH_SERVICE_URL: "http://auth-service:8080"
+  USER_SERVICE_URL: "http://user-service:8080"
+  POLL_SERVICE_URL: "http://poll-service:8080"
+  VOTE_SERVICE_URL: "http://vote-service:8080"
+  RESULT_SERVICE_URL: "http://result-service:8080"
+  API_GATEWAY_URL: "http://api-gateway:8080"
+
+  # Minikube PostgreSQL Database Configuration
   DB_HOST: "postgres-db"
-  # Database port for PostgreSQL.
   DB_PORT: "5432"
-  AUTH_DB_NAME: "auth"
-  USER_DB_NAME: "users"
-  POLL_DB_NAME: "polls"
+  DB_NAME: "postgres"
+
+  # Schemas used by each service against the shared Postgres database
+  DB_SCHEMA_AUTH: "auth"
+  DB_SCHEMA_USERS: "users"
+  DB_SCHEMA_POLLS: "polls"
+  DB_SCHEMA_VOTES: "votes"
+  DB_SCHEMA_RESULTS: "results"
 
 frontend:
   enabled: true
@@ -38,13 +49,6 @@ auth-service:
     tag: "latest"
   service:
     port: 8080
-  # Example of a service-specific environment variable
-  env:
-    - name: DB_NAME
-      valueFrom:
-        configMapKeyRef:
-          name: vote-poll-config
-          key: AUTH_DB_NAME
 
 user-service:
   enabled: true
@@ -54,12 +58,6 @@ user-service:
     tag: "latest"
   service:
     port: 8080
-  env:
-    - name: DB_NAME
-      valueFrom:
-        configMapKeyRef:
-          name: vote-poll-config
-          key: USER_DB_NAME
 
 poll-service:
   enabled: true
@@ -69,12 +67,6 @@ poll-service:
     tag: "latest"
   service:
     port: 8080
-  env:
-    - name: DB_NAME
-      valueFrom:
-        configMapKeyRef:
-          name: vote-poll-config
-          key: POLL_DB_NAME
 
 vote-service:
   enabled: true
@@ -93,3 +85,16 @@ result-service:
     tag: "latest"
   service:
     port: 8080
+
+secrets:
+  DB_USER: "postgres"
+  DB_PASSWORD: "postgres_password"
+  JDBC_URL: "jdbc:postgresql://postgres-db:5432/postgres"
+  AUTH_JDBC_URL: "jdbc:postgresql://postgres-db:5432/postgres?currentSchema=auth"
+  POLL_JDBC_URL: "jdbc:postgresql://postgres-db:5432/postgres?currentSchema=polls"
+  USER_DATABASE_URL: "postgresql://postgres:postgres_password@postgres-db:5432/postgres?options=--search_path%3Dusers"
+  VOTE_DATABASE_URL: "postgresql://postgres:postgres_password@postgres-db:5432/postgres?options=--search_path%3Dvotes,polls"
+  RESULT_DATABASE_URL: "postgresql://postgres:postgres_password@postgres-db:5432/postgres?options=--search_path%3Dresults,polls,votes"
+  JWT_SECRET: "dev-secret-key-change-in-production-12345"
+  DATABASE_POOL_SIZE: "10"
+  DATABASE_MAX_IDLE_TIME: "30"

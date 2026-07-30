@@ -41,3 +41,7 @@ dependencies:
     repository: "file://../microservice"
     alias: result-service
     condition: result-service.enabled
+  - name: postgres-db
+    version: "0.1.0"
+    repository: "file://../postgres-db"
+    alias: postgres-db

@@ -4,6 +4,13 @@
 
 replicaCount: 1
 
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 25%
+    maxUnavailable: 25%
+
+
 image:
   repository: "" # REQUIRED: The service name, e.g., "auth-service"
   pullPolicy: IfNotPresent
