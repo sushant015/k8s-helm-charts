@@ -39,11 +39,10 @@ spec:
                   key: POSTGRES_DB
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
-          volumeMounts:
-            - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
+          {{- if .Values.initdb.enabled }}
             - name: postgres-initdb
               mountPath: /docker-entrypoint-initdb.d
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:
@@ -62,6 +61,8 @@ spec:
         - name: postgres-storage
           persistentVolumeClaim:
             claimName: {{ include "chart.fullname" . }}-pvc
+        {{- if .Values.initdb.enabled }}
         - name: postgres-initdb
           configMap:
             name: {{ include "chart.fullname" . }}-initdb
+        {{- end }}
