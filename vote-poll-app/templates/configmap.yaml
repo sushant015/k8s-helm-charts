@@ -1,0 +1,18 @@
+{{- /*
+This template creates the central ConfigMap used by all microservices.
+It sources its data from the `config` section of the values.yaml file.
+*/ -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vote-poll-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: vote-poll-config
+    helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+{{- with .Values.config }}
+{{ toYaml . | nindent 2 }}
+{{- end }}

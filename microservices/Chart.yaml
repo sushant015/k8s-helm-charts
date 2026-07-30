@@ -1,0 +1,5 @@
+name: microservice
+description: A generic Helm chart for deploying a microservice for the Vote-Poll app
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

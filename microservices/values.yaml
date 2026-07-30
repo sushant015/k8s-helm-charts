@@ -1,0 +1,98 @@
+# Default values for microservice chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: "" # REQUIRED: The service name, e.g., "auth-service"
+  pullPolicy: IfNotPresent
+  # REQUIRED: Overrides the image tag.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created.
+  create: true
+  # Annotations to add to the service account.
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template.
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 1000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8080 # Default port for most microservices
+
+# Probes configuration
+livenessProbe:
+  enabled: true
+  path: /actuator/health
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+  successThreshold: 1
+
+readinessProbe:
+  enabled: true
+  path: /actuator/health
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+  successThreshold: 1
+
+resources:
+  # Based on Minikube configuration from project documentation
+  limits:
+    cpu: 500m
+    memory: 384Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+# Additional environment variables to be added to the container
+# Example for a service needing a specific database name:
+# env:
+#   - name: DB_NAME
+#     valueFrom:
+#       configMapKeyRef:
+#         name: vote-poll-config
+#         key: AUTH_DB_NAME
+env: []
+
+# Names of existing ConfigMap and Secret to mount all environment variables from.
+# These are expected to be created separately. Set to "" to disable.
+existingConfigMap: "vote-poll-config"
+existingSecret: "vote-poll-secrets"
+
+# Additional sources for environment variables from other secrets or configmaps
+envFrom: []
+# - secretRef:
+#     name: another-secret
+# - configMapRef:
+#     name: another-configmap
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+

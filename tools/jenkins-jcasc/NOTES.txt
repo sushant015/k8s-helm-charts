@@ -3,8 +3,9 @@ Your Jenkins master has been installed.
 1. Get your 'admin' user password by running:
    {{- if contains "NodePort" .Values.service.type }}
    export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "jenkins.fullname" . }})
-   export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
-   echo "Jenkins URL: http://$NODE_IP:$NODE_PORT"
+   export NODE_IP=$(minikube ip)
+   echo "Jenkins URL (for Minikube): http://$NODE_IP:$NODE_PORT"
+   echo "For other environments, use the external IP of one of your Kubernetes nodes."
    {{- else if contains "LoadBalancer" .Values.service.type }}
    NOTE: It may take a few minutes for the LoadBalancer IP to be available.
          You can watch the status of by running 'kubectl get svc -w {{ include "jenkins.fullname" . }}'

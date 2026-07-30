@@ -77,9 +77,8 @@ jcasc:
   # The content of your jenkins.yaml JCasC file.
   # See: https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/docs/features/configurationReload.md
   configScripts:
-    # This provides a minimal default configuration.
-    # It is expected that you will override this with your own configuration
-    # during deployment, for example, via Terraform.
+    # Provides a minimal default configuration.
+    # It is expected that you will override this with your own configuration.
     # jenkins-casc.yaml: |
     #   jenkins:
     #     systemMessage: "Jenkins configured automatically by JCasC"

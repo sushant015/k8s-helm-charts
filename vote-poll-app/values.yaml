@@ -1,0 +1,95 @@
+# Values for the vote-poll-app umbrella chart.
+# Each key under this top level corresponds to a microservice (a sub-chart alias).
+
+# Global configuration values that will be placed in the vote-poll-config ConfigMap.
+# This makes the chart self-contained.
+config:
+  # Database host for all services, pointing to the Kubernetes service name for PostgreSQL.
+  DB_HOST: "postgres-db"
+  # Database port for PostgreSQL.
+  DB_PORT: "5432"
+  AUTH_DB_NAME: "auth"
+  USER_DB_NAME: "users"
+  POLL_DB_NAME: "polls"
+
+frontend:
+  enabled: true
+  nameOverride: "frontend"
+  image:
+    repository: "frontend"
+    tag: "latest" # It's recommended to override this with a specific tag during deployment
+  service:
+    port: 8080 # The container port for the frontend service
+
+api-gateway:
+  enabled: true
+  nameOverride: "api-gateway"
+  image:
+    repository: "api-gateway"
+    tag: "latest"
+  service:
+    port: 8080
+
+auth-service:
+  enabled: true
+  nameOverride: "auth-service"
+  image:
+    repository: "auth-service"
+    tag: "latest"
+  service:
+    port: 8080
+  # Example of a service-specific environment variable
+  env:
+    - name: DB_NAME
+      valueFrom:
+        configMapKeyRef:
+          name: vote-poll-config
+          key: AUTH_DB_NAME
+
+user-service:
+  enabled: true
+  nameOverride: "user-service"
+  image:
+    repository: "user-service"
+    tag: "latest"
+  service:
+    port: 8080
+  env:
+    - name: DB_NAME
+      valueFrom:
+        configMapKeyRef:
+          name: vote-poll-config
+          key: USER_DB_NAME
+
+poll-service:
+  enabled: true
+  nameOverride: "poll-service"
+  image:
+    repository: "poll-service"
+    tag: "latest"
+  service:
+    port: 8080
+  env:
+    - name: DB_NAME
+      valueFrom:
+        configMapKeyRef:
+          name: vote-poll-config
+          key: POLL_DB_NAME
+
+vote-service:
+  enabled: true
+  nameOverride: "vote-service"
+  image:
+    repository: "vote-service"
+    tag: "latest"
+  service:
+    port: 8080
+
+result-service:
+  enabled: true
+  nameOverride: "result-service"
+  image:
+    repository: "result-service"
+    tag: "latest"
+  service:
+    port: 8080
