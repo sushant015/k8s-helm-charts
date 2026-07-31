@@ -1,0 +1,27 @@
+dependencies:
+- name: microservice
+  repository: file://../microservice
+  version: 0.1.0
+- name: microservice
+  repository: file://../microservice
+  version: 0.1.0
+- name: microservice
+  repository: file://../microservice
+  version: 0.1.0
+- name: microservice
+  repository: file://../microservice
+  version: 0.1.0
+- name: microservice
+  repository: file://../microservice
+  version: 0.1.0
+- name: microservice
+  repository: file://../microservice
+  version: 0.1.0
+- name: microservice
+  repository: file://../microservice
+  version: 0.1.0
+- name: postgres-db
+  repository: file://../postgres-db
+  version: 0.1.0
+digest: sha256:c098b9041b00d4e7d13466f55d3b09d08407daf963d805444559e1a98b34de10
+generated: "2026-07-31T17:44:42.180678+05:30"

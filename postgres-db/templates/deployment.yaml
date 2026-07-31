@@ -39,6 +39,9 @@ spec:
                   key: POSTGRES_DB
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
           {{- if .Values.initdb.enabled }}
             - name: postgres-initdb
               mountPath: /docker-entrypoint-initdb.d

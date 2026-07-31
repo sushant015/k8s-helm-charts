@@ -50,6 +50,7 @@ networkPolicy:
 
 # Configuration for the PostgreSQL database sub-chart.
 postgres-db:
+  fullnameOverride: "postgres-db"
   postgresql:
     username: *db_user
     password: *db_password
@@ -82,6 +83,7 @@ postgres-db:
 frontend:
   enabled: true
   nameOverride: "frontend"
+  fullnameOverride: "frontend"
   replicaCount: 3
   image:
     repository: "frontend"
@@ -109,6 +111,7 @@ frontend:
 api-gateway:
   enabled: true
   nameOverride: "api-gateway"
+  fullnameOverride: "api-gateway"
   replicaCount: 1
   image:
     repository: "api-gateway"
@@ -139,6 +142,7 @@ api-gateway:
 auth-service:
   enabled: true
   nameOverride: "auth-service"
+  fullnameOverride: "auth-service"
   replicaCount: 2
   strategy:
     type: RollingUpdate
@@ -152,12 +156,11 @@ auth-service:
   service:
     type: ClusterIP
     port: 8080
-  # Mounts both the main configmap and specific secrets.
   existingConfigMap: "vote-poll-config"
   existingSecret: "vote-poll-secrets"
-  # The generic microservice chart already mounts the full secret, so
-  # individual env vars are not needed if the app can read from the env.
-  # If the app requires these exact env var names, we would list them here.
+  env:
+    - name: DATABASE_URL
+      valueFrom: { secretKeyRef: { name: vote-poll-secrets, key: AUTH_JDBC_URL } }
   resources:
     requests:
       cpu: 100m
@@ -177,6 +180,7 @@ auth-service:
 user-service:
   enabled: true
   nameOverride: "user-service"
+  fullnameOverride: "user-service"
   replicaCount: 2
   strategy:
     type: RollingUpdate
@@ -219,6 +223,7 @@ user-service:
 poll-service:
   enabled: true
   nameOverride: "poll-service"
+  fullnameOverride: "poll-service"
   replicaCount: 2
   strategy:
     type: RollingUpdate
@@ -234,6 +239,9 @@ poll-service:
     port: 8080
   existingConfigMap: "vote-poll-config"
   existingSecret: "vote-poll-secrets"
+  env:
+    - name: DATABASE_URL
+      valueFrom: { secretKeyRef: { name: vote-poll-secrets, key: POLL_JDBC_URL } }
   resources:
     requests:
       cpu: 100m
@@ -253,6 +261,7 @@ poll-service:
 vote-service:
   enabled: true
   nameOverride: "vote-service"
+  fullnameOverride: "vote-service"
   replicaCount: 2
   strategy:
     type: RollingUpdate
@@ -296,6 +305,7 @@ vote-service:
 result-service:
   enabled: true
   nameOverride: "result-service"
+  fullnameOverride: "result-service"
   replicaCount: 2
   strategy:
     type: RollingUpdate
