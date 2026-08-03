@@ -97,16 +97,22 @@ frontend:
   existingSecret: ""
   resources:
     requests:
-      cpu: 50m
+      cpu: 10m
       memory: 64Mi
     limits:
-      cpu: 200m
+      cpu: 100m
       memory: 128Mi
   # No probes defined for frontend in the source YAML.
   livenessProbe:
     enabled: false
   readinessProbe:
     enabled: false
+  hpa:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 8
+    targetCPUUtilizationPercentage: 50
+
 
 api-gateway:
   enabled: true

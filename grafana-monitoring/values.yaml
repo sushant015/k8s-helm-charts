@@ -1,0 +1,62 @@
+# Default values for grafana-monitoring.
+# This chart wraps the official grafana Helm chart.
+
+grafana:
+  # Enable admin password configuration or use default
+  adminPassword: "admin"
+
+  # Expose Grafana as NodePort to easily access it locally
+  service:
+    type: NodePort
+    port: 80
+    targetPort: 3000
+    nodePort: 32000
+
+  # Automatic Datasource Configuration
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          access: proxy
+          url: http://prometheus-kube-prometheus-prometheus.monitoring:9090
+          isDefault: true
+          jsonData:
+            httpMethod: POST
+
+  # Automatic Predefined Dashboards
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'default'
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+
+  dashboards:
+    default:
+      kubernetes-cluster:
+        # Kubernetes Cluster Monitoring
+        gnetId: 315
+        datasource: Prometheus
+      node-exporter:
+        # Node Exporter Full
+        gnetId: 1860
+        datasource: Prometheus
+      k8s-resources-pod:
+        # Kubernetes Resources / Pods
+        gnetId: 14205
+        datasource: Prometheus
+
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+

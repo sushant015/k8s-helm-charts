@@ -37,6 +37,8 @@ livenessProbe:
     - "pg_isready -U postgres"
   initialDelaySeconds: 30
   periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
 
 readinessProbe:
   enabled: true
@@ -46,6 +48,8 @@ readinessProbe:
     - "pg_isready -U postgres"
   initialDelaySeconds: 10
   periodSeconds: 5
+  timeoutSeconds: 5
+  failureThreshold: 6
 
 # Database initialization script
 # Enabled by default, but can be turned off if not needed.

@@ -1,0 +1,184 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vote-poll-custom-dashboard
+  labels:
+    grafana_dashboard: "1"
+data:
+  vote-poll-dashboard.json: |
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": {
+              "type": "datasource",
+              "uid": "grafana"
+            },
+            "enable": true,
+            "hide": true,
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
+      },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 0,
+      "id": null,
+      "links": [],
+      "liveNow": false,
+      "panels": [
+        {
+          "collapsed": false,
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "id": 1,
+          "title": "Active Pod Count per Service (vote-poll)",
+          "type": "bargauge",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Prometheus"
+              },
+              "editorMode": "code",
+              "expr": "sum by (service) (label_replace(sum(kube_pod_status_phase{namespace=\"vote-poll\", phase=\"Running\"}) by (pod), \"service\", \"$1\", \"pod\", \"^([a-z0-9-]+)-[0-9a-f]+-[a-z0-9]+$\"))",
+              "legendFormat": "{{ "{{" }}service{{ "}}" }}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "options": {
+            "displayMode": "lcd",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true
+          }
+        },
+        {
+          "title": "CPU Usage per Service (vote-poll)",
+          "type": "timeseries",
+          "id": 2,
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 7
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Prometheus"
+              },
+              "editorMode": "code",
+              "expr": "sum by (service) (label_replace(sum(rate(container_cpu_usage_seconds_total{namespace=\"vote-poll\"}[5m])) by (pod), \"service\", \"$1\", \"pod\", \"^([a-z0-9-]+)-[0-9a-f]+-[a-z0-9]+$\"))",
+              "legendFormat": "{{ "{{" }}service{{ "}}" }}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth"
+              },
+              "unit": "cores"
+            }
+          }
+        },
+        {
+          "title": "Memory Working Set per Service (vote-poll)",
+          "type": "timeseries",
+          "id": 3,
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 7
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Prometheus"
+              },
+              "editorMode": "code",
+              "expr": "sum by (service) (label_replace(sum(container_memory_working_set_bytes{namespace=\"vote-poll\"}) by (pod), \"service\", \"$1\", \"pod\", \"^([a-z0-9-]+)-[0-9a-f]+-[a-z0-9]+$\"))",
+              "legendFormat": "{{ "{{" }}service{{ "}}" }}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "smooth"
+              },
+              "unit": "decbytes"
+            }
+          }
+        }
+      ],
+      "refresh": "5s",
+      "schemaVersion": 36,
+      "style": "dark",
+      "tags": [],
+      "templating": {
+        "list": []
+      },
+      "time": {
+        "from": "now-15m",
+        "to": "now"
+      },
+      "timepicker": {},
+      "timezone": "",
+      "title": "Minikube Vote-Poll Service Monitor",
+      "uid": "vote-poll-minikube-metrics",
+      "version": 1,
+      "weekStart": ""
+    }
