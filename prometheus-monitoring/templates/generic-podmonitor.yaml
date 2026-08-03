@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "prometheus-monitoring.fullname" . }}-generic-pods
+  labels:
+    {{- include "prometheus-monitoring.labels" . | nindent 4 }}
+spec:
+  # Discover and scrape pods in all namespaces
+  namespaceSelector:
+    any: true
+  selector:
+    matchLabels:
+      prometheus.io/scrape-pod: "true"
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+    - port: metrics
+      path: /metrics
+      interval: 15s
+    - port: web
+      path: /metrics
+      interval: 15s

@@ -107,3 +107,10 @@ pdb:
   enabled: false
   minAvailable: 1
 
+# Prometheus Operator ServiceMonitor configuration
+serviceMonitor:
+  enabled: false
+  path: /metrics
+  interval: 15s
+
+

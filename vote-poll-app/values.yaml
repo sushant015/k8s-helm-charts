@@ -176,6 +176,10 @@ auth-service:
     path: /actuator/health
     initialDelaySeconds: 30
     periodSeconds: 10
+  serviceMonitor:
+    enabled: true
+    path: /actuator/prometheus
+
 
 user-service:
   enabled: true
@@ -257,6 +261,10 @@ poll-service:
     path: /actuator/health
     initialDelaySeconds: 30
     periodSeconds: 10
+  serviceMonitor:
+    enabled: true
+    path: /actuator/prometheus
+
 
 vote-service:
   enabled: true

@@ -1,0 +1,62 @@
+# Default values for prometheus-monitoring.
+# This chart wraps the kube-prometheus-stack dependency.
+
+# Configuration overrides for the dependency chart 'kube-prometheus-stack'
+kube-prometheus-stack:
+  # Enable Prometheus Operator to manage Prometheus, ServiceMonitors, and PodMonitors
+  prometheusOperator:
+    enabled: true
+
+  # Configure Prometheus Server
+  prometheus:
+    enabled: true
+    prometheusSpec:
+      # Scrape interval and evaluation interval
+      scrapeInterval: "15s"
+      evaluationInterval: "15s"
+
+      # Enable cluster-wide scraping of ServiceMonitors and PodMonitors
+      # By default, kube-prometheus-stack only scrapes monitors that match its release name.
+      # Setting these selectors to empty ({}) and selectorNilUsesHelmValues to false
+      # allows Prometheus to discover monitors in ANY namespace, with ANY labels.
+      serviceMonitorSelectorNilUsesHelmValues: false
+      serviceMonitorSelector: {}
+      serviceMonitorNamespaceSelectorNilUsesHelmValues: false
+      serviceMonitorNamespaceSelector: {}
+
+      podMonitorSelectorNilUsesHelmValues: false
+      podMonitorSelector: {}
+      podMonitorNamespaceSelectorNilUsesHelmValues: false
+      podMonitorNamespaceSelector: {}
+
+      # Configure Persistent Storage (PVC) for Prometheus
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            storageClassName: "standard" # Minikube default storage class. Override with "premium-rwo" or "standard-rwo" on GKE.
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: "10Gi"
+
+  # Install Kube-State-Metrics to monitor Kubernetes API objects (Deployments, Pods, Services, etc.)
+  kube-state-metrics:
+    enabled: true
+
+  # Install Node Exporter to monitor node-level host metrics (CPU, Memory, Disk, Network)
+  prometheus-node-exporter:
+    enabled: true
+    hostNetwork: true
+    hostPID: true
+
+  # Kubelet metrics scraping (includes cAdvisor metrics at /metrics/cadvisor)
+  kubelet:
+    enabled: true
+    serviceMonitor:
+      cAdvisor: true # Enable scraping of container metrics (CPU, Memory, Disk usage per container)
+
+  # Disable Grafana and Alertmanager by default to save resources, but keep them easy to toggle
+  grafana:
+    enabled: false
+  alertmanager:
+    enabled: false

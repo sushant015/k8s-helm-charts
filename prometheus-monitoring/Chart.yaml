@@ -1,0 +1,11 @@
+apiVersion: v2
+name: prometheus-monitoring
+description: A parent Helm chart to deploy the Prometheus Operator, Prometheus Server, Kube State Metrics, Node Exporter, and configure cAdvisor metrics scraping.
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
+dependencies:
+  - name: kube-prometheus-stack
+    version: "61.3.0"
+    repository: "https://prometheus-community.github.io/helm-charts"
