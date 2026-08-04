@@ -1,0 +1,26 @@
+# Configuration overrides for the nested loki-stack dependency
+loki-stack:
+  loki:
+    enabled: true
+    image:
+      tag: "2.9.3"
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+  promtail:
+    enabled: true
+    config:
+      snippets:
+        pipelineStages:
+          - docker: {}
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 20m
+        memory: 64Mi
