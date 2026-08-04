@@ -50,7 +50,7 @@ Here's how you could deploy the `auth-service` using this chart.
 
 2.  **Install the chart:**
 
-    Navigate to the `k8s-helm-charts/microservice` directory and run:
+    Navigate to the `k8s-helm-charts/apps/microservice` directory and run:
     ```bash
     helm install auth-service . \
       --namespace vote-poll \
